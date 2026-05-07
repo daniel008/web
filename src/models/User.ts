@@ -1,45 +1,33 @@
-interface UserProps {
-  id: number;
-  name: string;
-  age: number;
+import { Sync } from './Sync.js';
+import { Eventing } from './Eventing.js';
+import { Attributes } from './Attributes.js';
+
+export interface UserProps {
+  id?: number;
+  name?: string;
+  age?: number;
 }
 
-type Callback = () => void;
+const rootUrl = 'http://localhost:3000/users';
 
 export class User {
-  events: { [key: string]: Callback[] } = {};
-  constructor(private data: UserProps) {}
+  public events: Eventing = new Eventing();
+  public sync: Sync<UserProps> = new Sync<UserProps>(rootUrl);
+  public attributes: Attributes<UserProps>;
 
-  // get(propName: keyof UserProps) {
-  //   return this.data[propName];
-  // }
-  // more engineered
-  get<K extends keyof UserProps>(key: K): UserProps[K] {
-    return this.data[key];
+  constructor(attrs: UserProps) {
+    this.attributes = new Attributes<UserProps>(attrs);
   }
 
-  // set<K extends keyof UserProps>(key: K, value: UserProps[K]): void {
-  //   this.data[key] = value;
-  // }
-
-  set(updater: (prev: Readonly<UserProps>) => Partial<UserProps>): void {
-    const next = updater(this.data);
-    Object.assign(this.data, next);
+  get on() {
+    return this.events.on;
   }
 
-  on(eventName: string, callback: Callback) {
-    const handler = this.events[eventName] || [];
-    handler.push(callback);
-    this.events[eventName] = handler;
+  get trigger() {
+    return this.events.trigger;
   }
 
-  trigger(eventName: string): void {
-    const handlers = this.events[eventName];
-
-    if (!handlers || handlers.length === 0) return;
-
-    handlers.forEach((callback) => {
-      callback();
-    });
+  get get() {
+    return this.attributes.get;
   }
 }
