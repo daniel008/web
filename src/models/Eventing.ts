@@ -1,15 +1,15 @@
 type Callback = () => void;
 
-class Eventing {
+export class Eventing {
   events: { [key: string]: Callback[] } = {};
 
-  on(eventName: string, callback: Callback) {
+  on = (eventName: string, callback: Callback) => {
     const handler = this.events[eventName] || [];
     handler.push(callback);
     this.events[eventName] = handler;
-  }
+  };
 
-  trigger(eventName: string): void {
+  trigger = (eventName: string): void => {
     const handlers = this.events[eventName];
 
     if (!handlers || handlers.length === 0) return;
@@ -17,7 +17,5 @@ class Eventing {
     handlers.forEach((callback) => {
       callback();
     });
-  }
+  };
 }
-
-export { Eventing };
