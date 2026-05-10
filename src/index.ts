@@ -1,9 +1,9 @@
-import { User } from './models/User.js';
+import { UserForm } from './views/UserForm.js';
 
-const collection = User.buildUserCollection();
+const root = document.getElementById('root');
 
-collection.on('change', () => {
-  console.log(collection);
-});
+if (!root) throw new Error('Root element not found');
 
-collection.fetch();
+const userForm = new UserForm(root);
+
+userForm.render();
